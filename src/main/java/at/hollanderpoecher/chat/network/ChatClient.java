@@ -6,6 +6,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
+import at.hollanderpoecher.chat.interfaces.Message;
 import at.hollanderpoecher.chat.util.Handler;
 import at.hollanderpoecher.chat.util.Util;
 
@@ -32,12 +33,14 @@ public class ChatClient implements Closeable {
 	}
 
 	public void send(Message message) throws IOException {
-		byte[] data = Message.toByteArray(message);
+		byte[] data = ChatMessage.toByteArray(message);
 		DatagramPacket packet = new DatagramPacket(data, data.length, this.groupAdress, this.port);
 		this.socket.send(packet);
 	}
 
-	private class SocketReader implements Runnable, Closeable {
+
+
+    private class SocketReader implements Runnable, Closeable {
 
 		private MulticastSocket socket;
 		private Handler<Message> handler;
@@ -65,7 +68,7 @@ public class ChatClient implements Closeable {
 						e.printStackTrace();
 					}
 				}
-				Message message = Message.fromByteArray(packet.getData());
+				Message message = ChatMessage.fromByteArray(packet.getData());
 				message.setSenderAddress(packet.getAddress());
 				this.handler.handle(message);
 			}
