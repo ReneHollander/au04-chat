@@ -6,9 +6,10 @@ import java.net.InetAddress;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+import at.hollanderpoecher.chat.interfaces.ChatClientInterface;
 import at.hollanderpoecher.chat.util.Handler;
 
-public class ChatClient implements Handler<byte[], InetAddress>, Closeable {
+public class ChatClient implements ChatClientInterface, Handler<byte[], InetAddress>, Closeable {
 
 	private static final Charset CHARSET = StandardCharsets.UTF_8;
 
