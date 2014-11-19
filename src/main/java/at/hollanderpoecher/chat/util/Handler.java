@@ -1,8 +1,8 @@
 package at.hollanderpoecher.chat.util;
 
 @FunctionalInterface
-public interface Handler<P, Q> {
+public interface Handler<P> {
 
-	public void handle(P param1, Q param2);
+	public void handle(P param);
 
 }
