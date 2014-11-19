@@ -1,11 +1,12 @@
 package at.hollanderpoecher.chat;
 
-import at.hollanderpoecher.chat.gui.GUI;
+import at.hollanderpoecher.chat.gui.ChatWindow;
 
 public class Chat {
 
 	public static void main(String[] args) {
-		GUI.launch(GUI.class, args);
+		ChatWindow.launch(ChatWindow.class, args);
+		ChatWindow chatWindow = ChatWindow.getInstance();
 	}
 
 }
