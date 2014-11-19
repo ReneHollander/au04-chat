@@ -7,12 +7,12 @@ import at.hollanderpoecher.chat.interfaces.Message;
  */
 public class ToUpperCase extends MessageDecorator {
 
-    public ToUpperCase(Message message) {
-        super(message);
-    }
+	public ToUpperCase(Message message) {
+		super(message);
+	}
 
-    @Override
-    public String getMsg() {
-        return super.getMsg().toUpperCase();
-    }
+	@Override
+	public String getMsg() {
+		return super.getMsg().toUpperCase();
+	}
 }

@@ -3,26 +3,22 @@ package at.hollanderpoecher.chat.decorator;
 import at.hollanderpoecher.chat.interfaces.Message;
 import at.hollanderpoecher.chat.util.Util;
 
-
 public class SmileyToLOL extends MessageDecorator {
 
-    private static final String[] SMILEYS = {":)", "=)", ":D"};
-    private static final String REPLACE_STRING = "*lol*";
+	private static final String[] SMILEYS = { ":)", "=)", ":D" };
+	private static final String REPLACE_STRING = "*lol*";
 
-    public SmileyToLOL(Message message) {
-        super(message);
-    }
+	public SmileyToLOL(Message message) {
+		super(message);
+	}
 
-    @Override
-    public String getMsg() {
-        String ret = super.getMsg();
-        for (String badWord : SMILEYS) {
-            ret = Util.replaceAll(badWord, REPLACE_STRING, ret, true);
-        }
-        return ret;
-    }
-
-
-
+	@Override
+	public String getMsg() {
+		String ret = super.getMsg();
+		for (String badWord : SMILEYS) {
+			ret = Util.replaceAll(badWord, REPLACE_STRING, ret, true);
+		}
+		return ret;
+	}
 
 }

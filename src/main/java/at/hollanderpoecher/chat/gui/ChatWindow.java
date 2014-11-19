@@ -1,6 +1,5 @@
 package at.hollanderpoecher.chat.gui;
 
-import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -12,6 +11,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import at.hollanderpoecher.chat.interfaces.Message;
 
 public class ChatWindow implements Runnable {
 
@@ -24,9 +24,6 @@ public class ChatWindow implements Runnable {
 	private TextField inputField;
 	private Button sendButton;
 
-	public ChatWindow() {
-	}
-
 	@Override
 	public void run() {
 		BorderPane pane = new BorderPane();
@@ -38,15 +35,9 @@ public class ChatWindow implements Runnable {
 		this.inputField = new TextField();
 		this.inputField.setFocusTraversable(true);
 		Platform.runLater(() -> this.inputField.requestFocus());
-		// this.inputField.setOnKeyPressed(event -> {
-		// if (event.getCode() == KeyCode.ENTER) {
-		// this.append();
-		// }
-		// });
 
 		this.sendButton = new Button("Send");
 		this.sendButton.setFocusTraversable(true);
-		// this.sendButton.setOnAction(event -> this.append());
 
 		pane.setCenter(contentArea);
 		pane.setBottom(new BorderPane(inputField, null, sendButton, null, null));
@@ -58,11 +49,6 @@ public class ChatWindow implements Runnable {
 		stage.show();
 	}
 
-	private void append() {
-		this.appendMyText(LocalDateTime.now(), this.inputField.getText());
-		this.inputField.setText("");
-	}
-
 	public void appendText(String text) {
 		if (this.contentArea.getText().length() == 0) {
 			this.contentArea.appendText(text);
@@ -71,12 +57,8 @@ public class ChatWindow implements Runnable {
 		}
 	}
 
-	public void appendMyText(LocalDateTime timestamp, String text) {
-		this.appendText("[" + timestamp.format(DATE_TIME_FORMATTER) + "] Ich: " + text);
-	}
-
-	public void appendPartnerText(LocalDateTime timestamp, InetAddress ip, String text) {
-		this.appendText("[" + timestamp.format(DATE_TIME_FORMATTER) + "] " + ip.toString() + ": " + text);
+	public void appendText(LocalDateTime timestamp, Message msg) {
+		this.appendText("[" + timestamp.format(DATE_TIME_FORMATTER) + "] " + msg.getNick() + " (" + msg.getSenderAddress().getHostAddress() + "): " + msg.getMsg());
 	}
 
 	public TextArea getContentArea() {

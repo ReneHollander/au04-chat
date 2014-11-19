@@ -3,23 +3,22 @@ package at.hollanderpoecher.chat.decorator;
 import at.hollanderpoecher.chat.interfaces.Message;
 import at.hollanderpoecher.chat.util.Util;
 
-public class FilterBadWords extends MessageDecorator{
+public class FilterBadWords extends MessageDecorator {
 
-    private static final String[] BAD_WORDS = {"arschloch", "faggot", "idiot"};
-    private static final String REPLACE_STRING = "$%&*";
+	private static final String[] BAD_WORDS = { "arschloch", "faggot", "idiot" };
+	private static final String REPLACE_STRING = "$%&*";
 
-    public FilterBadWords(Message message) {
-        super(message);
-    }
+	public FilterBadWords(Message message) {
+		super(message);
+	}
 
-    @Override
-    public String getMsg() {
-        String ret = super.getMsg();
-        for (String badWord : BAD_WORDS) {
-            ret = Util.replaceAll(badWord, REPLACE_STRING, ret, true);
-        }
-        return ret;
-    }
-
+	@Override
+	public String getMsg() {
+		String ret = super.getMsg();
+		for (String badWord : BAD_WORDS) {
+			ret = Util.replaceAll(badWord, REPLACE_STRING, ret, true);
+		}
+		return ret;
+	}
 
 }

@@ -33,14 +33,12 @@ public class ChatClient implements Closeable {
 	}
 
 	public void send(Message message) throws IOException {
-		byte[] data = ChatMessage.toByteArray(message);
+		byte[] data = MessageUtils.toByteArray(message);
 		DatagramPacket packet = new DatagramPacket(data, data.length, this.groupAdress, this.port);
 		this.socket.send(packet);
 	}
 
-
-
-    private class SocketReader implements Runnable, Closeable {
+	private class SocketReader implements Runnable, Closeable {
 
 		private MulticastSocket socket;
 		private Handler<Message> handler;
@@ -68,7 +66,7 @@ public class ChatClient implements Closeable {
 						e.printStackTrace();
 					}
 				}
-				Message message = ChatMessage.fromByteArray(packet.getData());
+				Message message = MessageUtils.fromByteArray(packet.getData());
 				message.setSenderAddress(packet.getAddress());
 				this.handler.handle(message);
 			}

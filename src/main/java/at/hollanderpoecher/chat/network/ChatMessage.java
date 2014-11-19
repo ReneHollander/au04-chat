@@ -1,22 +1,32 @@
 package at.hollanderpoecher.chat.network;
 
+import java.net.InetAddress;
+
 import at.hollanderpoecher.chat.interfaces.Message;
 
-import java.net.InetAddress;
-import java.nio.charset.StandardCharsets;
-
 public class ChatMessage implements Message {
+
+	private String nick;
 	private String msg;
 
 	private InetAddress senderAddress;
 
-	public ChatMessage(String msg) {
+	public ChatMessage(String nick, String msg) {
+		this.setNick(nick);
 		this.setMsg(msg);
 	}
 
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
+	public void setNick(String nick) {
+		this.nick = nick;
+	}
+
+	public String getNick() {
+		return this.nick;
+	}
+
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
 
 	public String getMsg() {
 		return msg;
@@ -30,14 +40,4 @@ public class ChatMessage implements Message {
 		this.senderAddress = senderAddress;
 	}
 
-	public static byte[] toByteArray(Message message) {
-		byte[] data = message.getMsg().getBytes(StandardCharsets.UTF_8);
-		return data;
-	}
-
-	public static Message fromByteArray(byte[] input) {
-		String msg = new String(input, StandardCharsets.UTF_8);
-        Message message = new ChatMessage(msg);
-		return message;
-	}
 }
