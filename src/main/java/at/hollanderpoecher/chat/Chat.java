@@ -5,9 +5,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 
-import at.hollanderpoecher.chat.decorator.FilterBadWords;
-import at.hollanderpoecher.chat.decorator.SmileyToLOL;
-import at.hollanderpoecher.chat.decorator.ToUpperCase;
+import at.hollanderpoecher.chat.decorator.*;
 import at.hollanderpoecher.chat.interfaces.Message;
 import at.hollanderpoecher.chat.network.ChatMessage;
 import javafx.application.Platform;
@@ -26,7 +24,11 @@ public class Chat {
 
 		@SuppressWarnings("resource")
 		ChatClient chatClient = new ChatClient(InetAddress.getByName("239.255.255.250"), 8888, (message1) -> {
-            Message message = new SmileyToLOL(new FilterBadWords(new ToUpperCase(message1)));
+            Message message = new ReneIsKing
+                                            (new SmileyToSmileyface
+                                                                   (new SmileyToLOL
+                                                                                   (new FilterBadWords
+                                                                                                      (new ToUpperCase(message1)))));
 
 			Platform.runLater(() -> {
 				try {
