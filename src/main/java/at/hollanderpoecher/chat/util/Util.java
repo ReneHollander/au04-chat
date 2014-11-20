@@ -2,11 +2,6 @@ package at.hollanderpoecher.chat.util;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
 
 /**
  * Util class
@@ -26,34 +21,6 @@ public class Util {
 			closeable.close();
 		} catch (IOException e) {
 		}
-	}
-
-	/**
-	 * Gets the local IP of the computer
-	 * 
-	 * @return Local IP of the computer
-	 */
-	public static String getIp() {
-		String ipAddress = null;
-		Enumeration<NetworkInterface> net = null;
-		try {
-			net = NetworkInterface.getNetworkInterfaces();
-		} catch (SocketException e) {
-			throw new RuntimeException(e);
-		}
-		while (net.hasMoreElements()) {
-			NetworkInterface element = net.nextElement();
-			Enumeration<InetAddress> addresses = element.getInetAddresses();
-			while (addresses.hasMoreElements()) {
-				InetAddress ip = addresses.nextElement();
-				if (ip instanceof Inet4Address) {
-					if (ip.isSiteLocalAddress()) {
-						ipAddress = ip.getHostAddress();
-					}
-				}
-			}
-		}
-		return ipAddress;
 	}
 
 	/**
@@ -112,16 +79,15 @@ public class Util {
 		return str;
 	}
 
-    //http://www.java-forum.org/allgemeine-java-themen/27218-zeilenumbruch-string-jeweils-x-zeichen-einfuegen.html
-    public static String splitString( String s, int col )
-    {
-        StringBuffer res = new StringBuffer( s );
+	// http://www.java-forum.org/allgemeine-java-themen/27218-zeilenumbruch-string-jeweils-x-zeichen-einfuegen.html
+	public static String splitString(String s, int col) {
+		StringBuffer res = new StringBuffer(s);
 
-        col++;
+		col++;
 
-        for( int i = 0; i <= ( s.length() / ( col - 1 ) ); ++ i )
-            res.insert( i  * col, '\n' );
-        return res.toString();
-    }
+		for (int i = 0; i <= (s.length() / (col - 1)); ++i)
+			res.insert(i * col, '\n');
+		return res.toString();
+	}
 
 }
