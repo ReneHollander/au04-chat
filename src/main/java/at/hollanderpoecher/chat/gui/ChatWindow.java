@@ -7,9 +7,11 @@ import java.time.format.DateTimeFormatterBuilder;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import at.hollanderpoecher.chat.interfaces.Message;
 
@@ -28,6 +30,8 @@ public class ChatWindow implements Runnable {
 	private TextArea contentArea;
 	private TextField inputField;
 	private Button sendButton;
+	private CheckBox badwordFilterCheckBox;
+	private Stage stage;
 
 	@Override
 	public void run() {
@@ -36,19 +40,24 @@ public class ChatWindow implements Runnable {
 		this.contentArea = new TextArea();
 		this.contentArea.setFocusTraversable(false);
 		this.contentArea.setEditable(false);
+		this.contentArea.setWrapText(true);
 
 		this.inputField = new TextField();
+		this.inputField.setMinWidth(75);
 		this.inputField.setFocusTraversable(true);
 		Platform.runLater(() -> this.inputField.requestFocus());
 
 		this.sendButton = new Button("Send");
 		this.sendButton.setFocusTraversable(true);
 
+		this.badwordFilterCheckBox = new CheckBox("Badword Filter");
+		this.badwordFilterCheckBox.setSelected(true);
+
 		pane.setCenter(contentArea);
-		pane.setBottom(new BorderPane(inputField, null, sendButton, null, null));
+		pane.setBottom(new BorderPane(inputField, null, new HBox(sendButton, badwordFilterCheckBox), null, null));
 		Scene scene = new Scene(pane, SCENE_WIDTH, SCENE_HEIGHT);
 
-		Stage stage = new Stage();
+		this.stage = new Stage();
 		stage.setScene(scene);
 		stage.setTitle("Chat");
 		stage.show();
@@ -57,14 +66,19 @@ public class ChatWindow implements Runnable {
 	/**
 	 * Appends the text to the content text area
 	 * 
+	 * @param timestamp
+	 *            Timestamp of the message
+	 * @param nick
+	 *            Nickname of the sender
 	 * @param text
 	 *            Text to append
 	 */
-	public void appendText(String text) {
+	public void appendText(LocalDateTime timestamp, String nick, String text) {
+		String textToAppend = "[" + timestamp.format(DATE_TIME_FORMATTER) + "] " + nick + ": " + text;
 		if (this.contentArea.getText().length() == 0) {
-			this.contentArea.appendText(text);
+			this.contentArea.appendText(textToAppend);
 		} else {
-			this.contentArea.appendText("\n" + text);
+			this.contentArea.appendText("\n" + textToAppend);
 		}
 	}
 
@@ -76,8 +90,17 @@ public class ChatWindow implements Runnable {
 	 * @param msg
 	 *            Message object to display
 	 */
-	public void appendText(LocalDateTime timestamp, Message msg) {
-		this.appendText("[" + timestamp.format(DATE_TIME_FORMATTER) + "] " + msg.getNick() + " (" + msg.getSenderAddress().getHostAddress() + "): " + msg.getMsg());
+	public void appendMessage(LocalDateTime timestamp, Message msg) {
+		this.appendText(timestamp, msg.getNick() + " (" + msg.getSenderAddress().getHostAddress() + ")", msg.getMsg());
+	}
+
+	/**
+	 * Get Stage
+	 * 
+	 * @return Stage
+	 */
+	public Stage getStage() {
+		return stage;
 	}
 
 	/**
@@ -105,5 +128,14 @@ public class ChatWindow implements Runnable {
 	 */
 	public Button getSendButton() {
 		return sendButton;
+	}
+
+	/**
+	 * Get BadwordFilterCheckBox Node
+	 * 
+	 * @return BadwordFilterCheckBox
+	 */
+	public CheckBox getBadwordFilterCheckBox() {
+		return badwordFilterCheckBox;
 	}
 }

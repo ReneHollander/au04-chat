@@ -5,7 +5,11 @@ import java.net.InetAddress;
 import java.time.LocalDateTime;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,23 +18,34 @@ import at.hollanderpoecher.chat.decorator.FilterBadWords;
 import at.hollanderpoecher.chat.decorator.ReneIsKing;
 import at.hollanderpoecher.chat.decorator.SmileyToLOL;
 import at.hollanderpoecher.chat.decorator.SmileyToSmileyface;
-import at.hollanderpoecher.chat.decorator.StringBufferSize;
 import at.hollanderpoecher.chat.decorator.ToUpperCase;
 import at.hollanderpoecher.chat.gui.ChatWindow;
 import at.hollanderpoecher.chat.interfaces.Message;
 import at.hollanderpoecher.chat.network.ChatClient;
 import at.hollanderpoecher.chat.network.ChatMessage;
 import at.hollanderpoecher.chat.util.FXUtils;
+import at.hollanderpoecher.chat.util.Handler;
 
 /**
  * A simple Multicast Chat
  * 
  * @author Rene Hollander
  */
-public class Chat {
+@SuppressWarnings("rawtypes")
+public class Chat implements EventHandler, Handler<Message> {
 
 	private static final Logger LOGGER = LogManager.getLogger(Chat.class);
+
 	private static final String USAGE_STRING = "\nUsage:\n chat.jar <ip> <port> <nick>";
+	private static final int MAX_MESSAGE_LENGTH = 1024;
+
+	private InetAddress ip;
+	private int port;
+	private String nick;
+
+	private ChatClient chatClient;
+
+	private ChatWindow chatWindow;
 
 	/**
 	 * Constructs a new Chat. It opens a ChatWindow and starts a ChatClient
@@ -45,35 +60,70 @@ public class Chat {
 	 *             If there was an error conencting to the server
 	 */
 	public Chat(InetAddress ip, int port, String nick) throws IOException {
-		ChatWindow chatWindow = new ChatWindow();
+		this.ip = ip;
+		this.port = port;
+		this.nick = nick;
 
-		ChatClient chatClient = new ChatClient(ip, port, (message1) -> {
-			Message message = new StringBufferSize(new ReneIsKing(new SmileyToSmileyface(new SmileyToLOL(new FilterBadWords(new ToUpperCase(message1))))));
-			Platform.runLater(() -> {
-				chatWindow.appendText(LocalDateTime.now(), message);
-			});
-		});
-
-		FXUtils.startFX(chatWindow);
-
-		chatWindow.getSendButton().setOnAction((event) -> {
-			send(nick, chatClient, chatWindow);
-		});
-
-		chatWindow.getInputField().setOnKeyPressed(event -> {
-			if (event.getCode() == KeyCode.ENTER) {
-				send(nick, chatClient, chatWindow);
-			}
-		});
+		this.chatClient = new ChatClient(this.ip, this.port, this);
 	}
 
-	private void send(String nick, ChatClient chatClient, ChatWindow chatWindow) {
+	/**
+	 * Starts and opens the GUI
+	 */
+	@SuppressWarnings("unchecked")
+	public void launch() {
+		this.chatWindow = new ChatWindow();
+		FXUtils.startFX(this.chatWindow);
+
+		this.chatWindow.getSendButton().setOnAction(this);
+		this.chatWindow.getInputField().setOnKeyPressed(this);
+	}
+
+	private void doSend() {
 		try {
-			chatClient.send(new ChatMessage(nick, chatWindow.getInputField().getText()));
+			if (this.chatWindow.getInputField().getText().length() > MAX_MESSAGE_LENGTH) {
+				this.chatWindow.appendText(LocalDateTime.now(), "System", "The message was too long! Maximum length: " + MAX_MESSAGE_LENGTH + ", Length of your message: " + this.chatWindow.getInputField().getText().length());
+			} else {
+				this.chatClient.send(new ChatMessage(this.nick, this.chatWindow.getInputField().getText()));
+			}
 		} catch (Exception e) {
 			LOGGER.throwing(e);
 		}
-		chatWindow.getInputField().setText("");
+		this.chatWindow.getInputField().setText("");
+	}
+
+	@Override
+	public void handle(Message message) {
+		message = new ToUpperCase(message);
+		message = new SmileyToLOL(message);
+		message = new SmileyToSmileyface(message);
+		message = new ReneIsKing(message);
+		if (this.chatWindow.getBadwordFilterCheckBox().isSelected()) {
+			message = new FilterBadWords(message);
+		}
+
+		// Dirty hack to fix final issue
+		final Message msg = message;
+		Platform.runLater(() -> {
+			this.chatWindow.appendMessage(LocalDateTime.now(), msg);
+		});
+	}
+
+	@Override
+	public void handle(Event e) {
+		if (e.getEventType() == KeyEvent.KEY_PRESSED) {
+			KeyEvent event = (KeyEvent) e;
+			if (event.getSource() == this.chatWindow.getInputField()) {
+				if (event.getCode() == KeyCode.ENTER) {
+					this.doSend();
+				}
+			}
+		} else if (e.getEventType() == ActionEvent.ACTION) {
+			ActionEvent event = (ActionEvent) e;
+			if (event.getSource() == this.chatWindow.getSendButton()) {
+				this.doSend();
+			}
+		}
 	}
 
 	/**
@@ -84,7 +134,6 @@ public class Chat {
 	 */
 	public static void main(String[] args) {
 		try {
-
 			// parse cli args
 			if (args.length != 3) {
 				LOGGER.error("Invalid Argument Count!" + USAGE_STRING);
@@ -113,7 +162,8 @@ public class Chat {
 
 			String nick = args[2];
 
-			new Chat(ip, port, nick);
+			Chat c = new Chat(ip, port, nick);
+			c.launch();
 		} catch (Exception e) {
 			LOGGER.throwing(e);
 		}
