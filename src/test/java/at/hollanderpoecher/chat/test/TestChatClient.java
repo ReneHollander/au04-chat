@@ -11,21 +11,34 @@ import org.junit.Test;
 
 import at.hollanderpoecher.chat.network.ChatClient;
 import at.hollanderpoecher.chat.network.ChatMessage;
+import at.hollanderpoecher.chat.util.Util;
 
 public class TestChatClient {
 
+	private static final InetAddress IP;
+	private static final int PORT = 5000;
+
+	static {
+		InetAddress ip = null;
+		try {
+			ip = InetAddress.getByName("239.255.255.250");
+		} catch (UnknownHostException e) {
+			ip = null;
+			e.printStackTrace();
+		}
+		IP = ip;
+	}
+
 	@Test
 	public void testContstructChatClient() throws UnknownHostException, IOException {
-		ChatClient cc = new ChatClient(InetAddress.getByName("239.255.255.250"), 5000, (msg) -> {
-			System.out.println(msg);
-		});
+		ChatClient cc = new ChatClient(IP, PORT);
 		cc.close();
 	}
 
 	@Test(expected = SocketException.class)
 	public void testWrongIp() throws UnknownHostException, IOException {
 		@SuppressWarnings({ "unused", "resource" })
-		ChatClient cc = new ChatClient(InetAddress.getByName("127.0.0.1"), 5000, (msg) -> {
+		ChatClient cc = new ChatClient(InetAddress.getByName("127.0.0.1"), PORT, (msg) -> {
 			System.out.println(msg);
 		});
 	}
@@ -33,14 +46,14 @@ public class TestChatClient {
 	@Test(expected = IllegalArgumentException.class)
 	public void testWrongPort() throws UnknownHostException, IOException {
 		@SuppressWarnings({ "unused", "resource" })
-		ChatClient cc = new ChatClient(InetAddress.getByName("239.255.255.250"), -1, (msg) -> {
+		ChatClient cc = new ChatClient(IP, -1, (msg) -> {
 			System.out.println(msg);
 		});
 	}
 
 	@Test
 	public void testSendMessage() throws UnknownHostException, IOException {
-		ChatClient cc2 = new ChatClient(InetAddress.getByName("239.255.255.250"), 5000);
+		ChatClient cc2 = new ChatClient(IP, PORT);
 		cc2.setHandler(msg -> {
 			assertEquals("Hello!", msg.getMsg());
 			try {
@@ -50,7 +63,7 @@ public class TestChatClient {
 			}
 		});
 
-		ChatClient cc1 = new ChatClient(InetAddress.getByName("239.255.255.250"), 5000, (msg) -> {
+		ChatClient cc1 = new ChatClient(IP, PORT, (msg) -> {
 		});
 
 		cc1.send(new ChatMessage("testuser1", "Hello!"));
@@ -59,13 +72,15 @@ public class TestChatClient {
 
 	@Test
 	public void testSendNick() throws UnknownHostException, IOException {
-		ChatClient cc1 = new ChatClient(InetAddress.getByName("239.255.255.250"), 5000, (msg) -> {
-		});
+		ChatClient cc1 = new ChatClient(IP, PORT);
 
 		cc1.send(new ChatMessage("testuser1", "Hello!"));
 
-		ChatClient cc2 = new ChatClient(InetAddress.getByName("239.255.255.250"), 5000, (msg) -> {
+		ChatClient cc2 = new ChatClient(IP, PORT);
+		cc2.setHandler((msg) -> {
 			assertEquals("testuser1", msg.getNick());
+			Util.closeSilently(cc1);
+			Util.closeSilently(cc2);
 		});
 	}
 }

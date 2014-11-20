@@ -23,7 +23,7 @@ import at.hollanderpoecher.chat.gui.ChatWindow;
 import at.hollanderpoecher.chat.interfaces.Message;
 import at.hollanderpoecher.chat.network.ChatClient;
 import at.hollanderpoecher.chat.network.ChatMessage;
-import at.hollanderpoecher.chat.util.FXUtils;
+import at.hollanderpoecher.chat.util.FXApplication;
 import at.hollanderpoecher.chat.util.Handler;
 
 /**
@@ -73,7 +73,8 @@ public class Chat implements EventHandler, Handler<Message> {
 	@SuppressWarnings("unchecked")
 	public void launch() {
 		this.chatWindow = new ChatWindow();
-		FXUtils.startFX(this.chatWindow);
+		FXApplication.launch();
+		FXApplication.launchStage(this.chatWindow);
 
 		this.chatWindow.getSendButton().setOnAction(this);
 		this.chatWindow.getInputField().setOnKeyPressed(this);
@@ -98,7 +99,7 @@ public class Chat implements EventHandler, Handler<Message> {
 		message = new SmileyToLOL(message);
 		message = new SmileyToSmileyface(message);
 		message = new ReneIsKing(message);
-		if (this.chatWindow.getBadwordFilterCheckBox().isSelected()) {
+		if (this.chatWindow != null && this.chatWindow.getBadwordFilterCheckBox() != null && this.chatWindow.getBadwordFilterCheckBox().isSelected()) {
 			message = new FilterBadWords(message);
 		}
 
@@ -124,6 +125,51 @@ public class Chat implements EventHandler, Handler<Message> {
 				this.doSend();
 			}
 		}
+	}
+
+	/**
+	 * Gets the IP Address of the current Chat
+	 * 
+	 * @return IP Address
+	 */
+	public InetAddress getIp() {
+		return ip;
+	}
+
+	/**
+	 * Gets the Port of the current Chat
+	 * 
+	 * @return Port
+	 */
+	public int getPort() {
+		return port;
+	}
+
+	/**
+	 * Gets the Nickname of the user of the current Chat
+	 * 
+	 * @return Nickname
+	 */
+	public String getNick() {
+		return nick;
+	}
+
+	/**
+	 * Gets the ChatClient used by this Chat
+	 * 
+	 * @return ChatClient
+	 */
+	public ChatClient getChatClient() {
+		return chatClient;
+	}
+
+	/**
+	 * Gets the ChatWindow used by this Chat
+	 * 
+	 * @return ChatWindow
+	 */
+	public ChatWindow getChatWindow() {
+		return chatWindow;
 	}
 
 	/**
