@@ -3,13 +3,9 @@ package at.hollanderpoecher.chat;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
 
+import at.hollanderpoecher.chat.decorator.*;
 import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
-import at.hollanderpoecher.chat.decorator.FilterBadWords;
-import at.hollanderpoecher.chat.decorator.ReneIsKing;
-import at.hollanderpoecher.chat.decorator.SmileyToLOL;
-import at.hollanderpoecher.chat.decorator.SmileyToSmileyface;
-import at.hollanderpoecher.chat.decorator.ToUpperCase;
 import at.hollanderpoecher.chat.gui.ChatWindow;
 import at.hollanderpoecher.chat.interfaces.Message;
 import at.hollanderpoecher.chat.network.ChatClient;
@@ -34,7 +30,7 @@ public class Chat {
 			ChatWindow chatWindow = new ChatWindow();
 
 			ChatClient chatClient = new ChatClient(InetAddress.getByName("239.255.255.250"), 8888, (message1) -> {
-				Message message = new ReneIsKing(new SmileyToSmileyface(new SmileyToLOL(new FilterBadWords(new ToUpperCase(message1)))));
+				Message message = new StringBufferSize(new ReneIsKing(new SmileyToSmileyface(new SmileyToLOL(new FilterBadWords(new ToUpperCase(message1))))));
 				Platform.runLater(() -> {
 					chatWindow.appendText(LocalDateTime.now(), message);
 				});

@@ -112,4 +112,16 @@ public class Util {
 		return str;
 	}
 
+    //http://www.java-forum.org/allgemeine-java-themen/27218-zeilenumbruch-string-jeweils-x-zeichen-einfuegen.html
+    public static String splitString( String s, int col )
+    {
+        StringBuffer res = new StringBuffer( s );
+
+        col++;
+
+        for( int i = 0; i <= ( s.length() / ( col - 1 ) ); ++ i )
+            res.insert( i  * col, '\n' );
+        return res.toString();
+    }
+
 }
