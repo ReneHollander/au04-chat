@@ -1,5 +1,6 @@
 package at.hollanderpoecher.chat;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
 
@@ -30,6 +31,50 @@ public class Chat {
 
 	private static final Logger LOGGER = LogManager.getLogger(Chat.class);
 	private static final String USAGE_STRING = "\nUsage:\n chat.jar <ip> <port> <nick>";
+
+	/**
+	 * Constructs a new Chat. It opens a ChatWindow and starts a ChatClient
+	 * 
+	 * @param ip
+	 *            IP of the multicast group
+	 * @param port
+	 *            Port of the multicast group
+	 * @param nick
+	 *            Nickname of the user
+	 * @throws IOException
+	 *             If there was an error conencting to the server
+	 */
+	public Chat(InetAddress ip, int port, String nick) throws IOException {
+		ChatWindow chatWindow = new ChatWindow();
+
+		ChatClient chatClient = new ChatClient(ip, port, (message1) -> {
+			Message message = new StringBufferSize(new ReneIsKing(new SmileyToSmileyface(new SmileyToLOL(new FilterBadWords(new ToUpperCase(message1))))));
+			Platform.runLater(() -> {
+				chatWindow.appendText(LocalDateTime.now(), message);
+			});
+		});
+
+		FXUtils.startFX(chatWindow);
+
+		chatWindow.getSendButton().setOnAction((event) -> {
+			send(nick, chatClient, chatWindow);
+		});
+
+		chatWindow.getInputField().setOnKeyPressed(event -> {
+			if (event.getCode() == KeyCode.ENTER) {
+				send(nick, chatClient, chatWindow);
+			}
+		});
+	}
+
+	private void send(String nick, ChatClient chatClient, ChatWindow chatWindow) {
+		try {
+			chatClient.send(new ChatMessage(nick, chatWindow.getInputField().getText()));
+		} catch (Exception e) {
+			LOGGER.throwing(e);
+		}
+		chatWindow.getInputField().setText("");
+	}
 
 	/**
 	 * Main Method of the chat. Connects the ChatClient to the ChatWindow
@@ -68,37 +113,9 @@ public class Chat {
 
 			String nick = args[2];
 
-			ChatWindow chatWindow = new ChatWindow();
-
-			ChatClient chatClient = new ChatClient(ip, port, (message1) -> {
-				Message message = new StringBufferSize(new ReneIsKing(new SmileyToSmileyface(new SmileyToLOL(new FilterBadWords(new ToUpperCase(message1))))));
-				Platform.runLater(() -> {
-					chatWindow.appendText(LocalDateTime.now(), message);
-				});
-			});
-
-			FXUtils.startFX(chatWindow);
-
-			chatWindow.getSendButton().setOnAction((event) -> {
-				send(nick, chatClient, chatWindow);
-			});
-
-			chatWindow.getInputField().setOnKeyPressed(event -> {
-				if (event.getCode() == KeyCode.ENTER) {
-					send(nick, chatClient, chatWindow);
-				}
-			});
+			new Chat(ip, port, nick);
 		} catch (Exception e) {
 			LOGGER.throwing(e);
 		}
-	}
-
-	private static void send(String nick, ChatClient chatClient, ChatWindow chatWindow) {
-		try {
-			chatClient.send(new ChatMessage(nick, chatWindow.getInputField().getText()));
-		} catch (Exception e) {
-			LOGGER.throwing(e);
-		}
-		chatWindow.getInputField().setText("");
 	}
 }
