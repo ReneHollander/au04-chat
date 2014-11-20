@@ -22,7 +22,6 @@ public class Chat {
 
 	public static void main(String[] args) throws UnknownHostException, IOException {
 		ChatWindow chatWindow = new ChatWindow();
-		FXUtils.startFX(chatWindow);
 
 		ChatClient chatClient = new ChatClient(InetAddress.getByName("239.255.255.250"), 8888, (message1) -> {
 			Message message = new ReneIsKing(new SmileyToSmileyface(new SmileyToLOL(new FilterBadWords(new ToUpperCase(message1)))));
@@ -30,6 +29,8 @@ public class Chat {
 				chatWindow.appendText(LocalDateTime.now(), message);
 			});
 		});
+
+		FXUtils.startFX(chatWindow);
 
 		chatWindow.getSendButton().setOnAction((event) -> {
 			send(chatClient, chatWindow);
