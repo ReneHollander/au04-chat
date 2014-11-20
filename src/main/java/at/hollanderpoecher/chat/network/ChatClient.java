@@ -6,6 +6,9 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import at.hollanderpoecher.chat.interfaces.Message;
 import at.hollanderpoecher.chat.util.Handler;
 import at.hollanderpoecher.chat.util.Util;
@@ -66,6 +69,8 @@ public class ChatClient implements Closeable {
 
 	private class SocketReader implements Runnable, Closeable {
 
+		final Logger LOGGER = LogManager.getLogger(SocketReader.class);
+
 		private MulticastSocket socket;
 		private Handler<Message> handler;
 
@@ -89,7 +94,7 @@ public class ChatClient implements Closeable {
 					this.socket.receive(packet);
 				} catch (IOException e) {
 					if (this.running == true) {
-						e.printStackTrace();
+						LOGGER.throwing(e);
 					}
 				}
 				Message message = MessageUtils.fromByteArray(packet.getData());

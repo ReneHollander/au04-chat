@@ -3,9 +3,18 @@ package at.hollanderpoecher.chat;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
 
-import at.hollanderpoecher.chat.decorator.*;
 import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import at.hollanderpoecher.chat.decorator.FilterBadWords;
+import at.hollanderpoecher.chat.decorator.ReneIsKing;
+import at.hollanderpoecher.chat.decorator.SmileyToLOL;
+import at.hollanderpoecher.chat.decorator.SmileyToSmileyface;
+import at.hollanderpoecher.chat.decorator.StringBufferSize;
+import at.hollanderpoecher.chat.decorator.ToUpperCase;
 import at.hollanderpoecher.chat.gui.ChatWindow;
 import at.hollanderpoecher.chat.interfaces.Message;
 import at.hollanderpoecher.chat.network.ChatClient;
@@ -19,6 +28,9 @@ import at.hollanderpoecher.chat.util.FXUtils;
  */
 public class Chat {
 
+	private static final Logger LOGGER = LogManager.getLogger(Chat.class);
+	private static final String USAGE_STRING = "\nUsage:\n chat.jar <ip> <port> <nick>";
+
 	/**
 	 * Main Method of the chat. Connects the ChatClient to the ChatWindow
 	 * 
@@ -27,9 +39,38 @@ public class Chat {
 	 */
 	public static void main(String[] args) {
 		try {
+
+			// parse cli args
+			if (args.length != 3) {
+				LOGGER.error("Invalid Argument Count!" + USAGE_STRING);
+				System.exit(1);
+			}
+
+			InetAddress ip = null;
+			try {
+				ip = InetAddress.getByName(args[0]);
+			} catch (Exception e) {
+				LOGGER.error("Invalid IP address!" + USAGE_STRING);
+				System.exit(1);
+			}
+
+			int port = -1;
+			try {
+				port = Integer.parseInt(args[1]);
+				if (port <= 0 || port > 65535) {
+					LOGGER.error("Invalid Port!" + USAGE_STRING);
+					System.exit(1);
+				}
+			} catch (Exception e) {
+				LOGGER.error("Invalid Port!" + USAGE_STRING);
+				System.exit(1);
+			}
+
+			String nick = args[2];
+
 			ChatWindow chatWindow = new ChatWindow();
 
-			ChatClient chatClient = new ChatClient(InetAddress.getByName("239.255.255.250"), 8888, (message1) -> {
+			ChatClient chatClient = new ChatClient(ip, port, (message1) -> {
 				Message message = new StringBufferSize(new ReneIsKing(new SmileyToSmileyface(new SmileyToLOL(new FilterBadWords(new ToUpperCase(message1))))));
 				Platform.runLater(() -> {
 					chatWindow.appendText(LocalDateTime.now(), message);
@@ -39,24 +80,24 @@ public class Chat {
 			FXUtils.startFX(chatWindow);
 
 			chatWindow.getSendButton().setOnAction((event) -> {
-				send(chatClient, chatWindow);
+				send(nick, chatClient, chatWindow);
 			});
 
 			chatWindow.getInputField().setOnKeyPressed(event -> {
 				if (event.getCode() == KeyCode.ENTER) {
-					send(chatClient, chatWindow);
+					send(nick, chatClient, chatWindow);
 				}
 			});
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.throwing(e);
 		}
 	}
 
-	private static void send(ChatClient chatClient, ChatWindow chatWindow) {
+	private static void send(String nick, ChatClient chatClient, ChatWindow chatWindow) {
 		try {
-			chatClient.send(new ChatMessage("Rene", chatWindow.getInputField().getText()));
+			chatClient.send(new ChatMessage(nick, chatWindow.getInputField().getText()));
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.throwing(e);
 		}
 		chatWindow.getInputField().setText("");
 	}
