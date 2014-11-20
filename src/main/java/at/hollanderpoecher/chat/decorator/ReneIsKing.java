@@ -14,9 +14,16 @@ public class ReneIsKing extends MessageDecorator {
 	private static final String[] SMILEYS = { "rene", "Rene", "René" };
 	private static final String REPLACE_STRING = "René♕";
 
+    /**
+     * Use the Message Constructor
+     *
+     * @param message the message object
+     */
 	public ReneIsKing(Message message) {
 		super(message);
 	}
+
+
 
 	@Override
 	public String getMsg() {
