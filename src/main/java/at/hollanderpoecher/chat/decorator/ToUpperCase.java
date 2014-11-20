@@ -9,9 +9,15 @@ import at.hollanderpoecher.chat.interfaces.Message;
  */
 public class ToUpperCase extends MessageDecorator {
 
+    /**
+     * Use the Message Constructor
+     *
+     * @param message the message object
+     */
 	public ToUpperCase(Message message) {
 		super(message);
 	}
+
 
 	@Override
 	public String getMsg() {

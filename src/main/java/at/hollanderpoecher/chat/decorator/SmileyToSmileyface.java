@@ -13,9 +13,15 @@ public class SmileyToSmileyface extends MessageDecorator {
 	private static final String[] SMILEYS = { ";)", ";-)", ";D" };
 	private static final String REPLACE_STRING = "☻";
 
+    /**
+     * Use the Message Constructor
+     *
+     * @param message the message object
+     */
 	public SmileyToSmileyface(Message message) {
 		super(message);
 	}
+
 
 	@Override
 	public String getMsg() {

@@ -13,9 +13,17 @@ public class FilterBadWords extends MessageDecorator {
 	private static final String[] BAD_WORDS = { "arschloch", "faggot", "idiot" };
 	private static final String REPLACE_STRING = "$%&*";
 
+
+    /**
+     * Use the Message Constructor
+     *
+     * @param message the message object
+     */
 	public FilterBadWords(Message message) {
 		super(message);
 	}
+
+
 
 	@Override
 	public String getMsg() {
