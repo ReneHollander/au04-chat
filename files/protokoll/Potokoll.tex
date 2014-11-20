@@ -1,3 +1,4 @@
+% !TeX spellcheck = en_US
 \documentclass[a4paper, 11pt]{article}
 \usepackage[utf8]{inputenc}
   \usepackage[pdftex]{graphicx}     
@@ -14,9 +15,6 @@
 
 \section{Aufgabenstellung}
 
-
-
-Als 
 
 \textbf{S04: Chat für Schwerhörige}
 \\\\
@@ -39,19 +37,28 @@ Verwende dafür ausgiebig das Decorator-Pattern.
 \\\\
 Das Message Objekt wird als Core verwende.
 Die verschiedenen Zusatzfunktionen werden in den Decorator Klassen implementiert. So können Zusatzfunktionen jederzeit ausgetauscht, abgeschaltet oder hinzugefügt werden
-\\\\\\
-2) Das Chatprinzip
 \\\\
-Der Nickname wird mit der Nachricht mitgeschickt, so können die verschiedenen Clients sich von einander unterscheiden. Als Kommunikationsmittel wird MultiSockets verwendet.
+2) Der Chat
 \\\\
-\includegraphics[width=10.5cm]{socketr} \\\\
+Der Nickname wird mit der Nachricht mitgeschickt, so können die verschiedenen Clients sich von einander unterscheiden. Als Kommunikationsmittel wird Multicast Sockets (UDP) verwendet.
+\\\\
+Die Nachricht wird binär übertragen:\\
+4 Byte Länge des Nickname\\
+Nickname UTF-8 kodiert\\
+4 Byte Länge der Nachricht\\
+Nachricht UTF-8 kodiert
+\\\\
+Als Puffer werden auf der Empfängerseite 4KB verwendet.
+\\\\
+\includegraphics[width=10.5cm]{socketr}
+\\\\
 \includegraphics[width=10.5cm]{socketimp}
 
 \section{Zeitaufstellung}
 
 \subsection{Zeitschätzung}
-180 Minuten Implementieren und Kommentieren pro Person
-45 Minuten Testen pro Person
+180 Minuten Implementieren und Kommentieren pro Person\\
+45 Minuten Testen pro Person\\
 30 Minuten Protokoll pro Person
 
 \subsection{Zeitaufzeichnung}
@@ -87,7 +94,8 @@ Der Nickname wird mit der Nachricht mitgeschickt, so können die verschiedenen C
 
 
 \section{Arbeitsdurchführung/Lessons Learned}
-
+Für eine einfache Umsetzung des Chatraumes wurde Multicast verwendet. Ein Multicast Socket kann einer Gruppe beitreten (Multicast Addresse) und empfängt dann alle gesendeten Nachrichten.Möchte man in einen anderen Chatraum, nimmt man einfach eine andere IP. Ein Nachteil von Multicast ist, das es meist nur im eigenen Netzwerk funktioniert.
+\\\\
 Für eine schnelle Programmierung ist es am besten die verschiedenen Funktionen herauszusuchen und dementsprechend zu verlinken.
 So müssen nicht alle Programmteile selber programmiert/designet werden.
 
