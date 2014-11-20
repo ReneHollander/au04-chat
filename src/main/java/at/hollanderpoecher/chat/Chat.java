@@ -1,8 +1,6 @@
 package at.hollanderpoecher.chat;
 
-import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 
 import javafx.application.Platform;
@@ -18,29 +16,44 @@ import at.hollanderpoecher.chat.network.ChatClient;
 import at.hollanderpoecher.chat.network.ChatMessage;
 import at.hollanderpoecher.chat.util.FXUtils;
 
+/**
+ * A simple Multicast Chat
+ * 
+ * @author Rene Hollander
+ */
 public class Chat {
 
-	public static void main(String[] args) throws UnknownHostException, IOException {
-		ChatWindow chatWindow = new ChatWindow();
+	/**
+	 * Main Method of the chat. Connects the ChatClient to the ChatWindow
+	 * 
+	 * @param args
+	 *            CLI Args
+	 */
+	public static void main(String[] args) {
+		try {
+			ChatWindow chatWindow = new ChatWindow();
 
-		ChatClient chatClient = new ChatClient(InetAddress.getByName("239.255.255.250"), 8888, (message1) -> {
-			Message message = new ReneIsKing(new SmileyToSmileyface(new SmileyToLOL(new FilterBadWords(new ToUpperCase(message1)))));
-			Platform.runLater(() -> {
-				chatWindow.appendText(LocalDateTime.now(), message);
+			ChatClient chatClient = new ChatClient(InetAddress.getByName("239.255.255.250"), 8888, (message1) -> {
+				Message message = new ReneIsKing(new SmileyToSmileyface(new SmileyToLOL(new FilterBadWords(new ToUpperCase(message1)))));
+				Platform.runLater(() -> {
+					chatWindow.appendText(LocalDateTime.now(), message);
+				});
 			});
-		});
 
-		FXUtils.startFX(chatWindow);
+			FXUtils.startFX(chatWindow);
 
-		chatWindow.getSendButton().setOnAction((event) -> {
-			send(chatClient, chatWindow);
-		});
-
-		chatWindow.getInputField().setOnKeyPressed(event -> {
-			if (event.getCode() == KeyCode.ENTER) {
+			chatWindow.getSendButton().setOnAction((event) -> {
 				send(chatClient, chatWindow);
-			}
-		});
+			});
+
+			chatWindow.getInputField().setOnKeyPressed(event -> {
+				if (event.getCode() == KeyCode.ENTER) {
+					send(chatClient, chatWindow);
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static void send(ChatClient chatClient, ChatWindow chatWindow) {

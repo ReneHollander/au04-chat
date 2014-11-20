@@ -4,14 +4,30 @@ import java.util.concurrent.Semaphore;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.image.WritableImage;
 import javafx.stage.Stage;
 
+/**
+ * 
+ * Helper Class to launch an JavaFX stage from everywhere in an application.
+ * After the Window ist shown, we return to the Thread that executed the call.
+ * 
+ * Source:
+ * http://a-hackers-craic.blogspot.co.at/2014/08/starting-javafx-from-random
+ * -java-code.html
+ * 
+ * @author NOTZED
+ */
 public class FXUtils {
 
 	static FXApplication app;
 	static Semaphore sem = new Semaphore(0);
 
+	/**
+	 * Launch a stage
+	 * 
+	 * @param r
+	 *            Runnable that launches a stage
+	 */
 	public static void startFX(Runnable r) {
 		if (app == null) {
 			try {
@@ -28,13 +44,14 @@ public class FXUtils {
 		}
 	}
 
+	/**
+	 * Application Wrapper to run a Runnable as an FX App
+	 * 
+	 * @author NOTZED
+	 */
 	public static class FXApplication extends Application {
 
-		WritableImage image;
 		static Runnable run;
-
-		public FXApplication() {
-		}
 
 		@Override
 		public void start(Stage stage) throws Exception {
@@ -43,6 +60,9 @@ public class FXUtils {
 			sem.release();
 		}
 
+		/**
+		 * @param r
+		 */
 		public static void start(Runnable r) {
 			run = r;
 			// Application.launch() can only be called from a static
