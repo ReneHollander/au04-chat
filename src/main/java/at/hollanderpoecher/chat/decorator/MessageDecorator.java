@@ -1,8 +1,8 @@
 package at.hollanderpoecher.chat.decorator;
 
-import java.net.InetAddress;
-
 import at.hollanderpoecher.chat.interfaces.Message;
+
+import java.net.InetAddress;
 
 /**
  * The Message Decorator
@@ -12,7 +12,11 @@ import at.hollanderpoecher.chat.interfaces.Message;
 public abstract class MessageDecorator implements Message {
 
 	private Message message;
-
+    /**
+     * Use the Message Constructor
+     *
+     * @param message set the message object
+     */
 	public MessageDecorator(Message message) {
 		this.message = message;
 	}
