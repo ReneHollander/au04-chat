@@ -4,7 +4,9 @@ import at.hollanderpoecher.chat.interfaces.Message;
 import at.hollanderpoecher.chat.util.Util;
 
 /**
- * Created by rene on 19.11.14.
+ *  A Message Decorator which change ;) smiley into a black Smiley
+ *
+ * @author Rene Poecher
  */
 public class SmileyToSmileyface extends MessageDecorator {
 

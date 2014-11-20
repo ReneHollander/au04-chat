@@ -3,7 +3,9 @@ package at.hollanderpoecher.chat.decorator;
 import at.hollanderpoecher.chat.interfaces.Message;
 
 /**
- * Created by rene on 19.11.14.
+ *  A Message Decorator which change all letters into uppercase
+ *
+ * @author Rene Poecher
  */
 public class ToUpperCase extends MessageDecorator {
 

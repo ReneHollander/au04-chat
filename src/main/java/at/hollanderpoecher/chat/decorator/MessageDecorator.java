@@ -5,7 +5,9 @@ import java.net.InetAddress;
 import at.hollanderpoecher.chat.interfaces.Message;
 
 /**
- * Created by rene on 19.11.14.
+ *  The Message Decorator
+ *
+ * @author Rene Poecher
  */
 public abstract class MessageDecorator implements Message {
 
