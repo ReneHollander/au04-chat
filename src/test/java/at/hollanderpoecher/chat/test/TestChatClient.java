@@ -7,16 +7,22 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import at.hollanderpoecher.chat.network.ChatClient;
 import at.hollanderpoecher.chat.network.ChatMessage;
 import at.hollanderpoecher.chat.util.Util;
 
+/**
+ * Test the networking component of the chat
+ * 
+ * @author Rene Hollander
+ */
 public class TestChatClient {
 
 	private static final InetAddress IP;
-	private static final int PORT = 5000;
+	private static int PORT = 5000;
 
 	static {
 		InetAddress ip = null;
@@ -29,12 +35,32 @@ public class TestChatClient {
 		IP = ip;
 	}
 
+	/**
+	 * Randomize the port before every test case
+	 */
+	@Before
+	public void randomizePort() {
+		PORT = (int) (Math.random() * 60000);
+	}
+
+	/**
+	 * Test constructing a new ChatClient with correct IP and Port
+	 * 
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
 	@Test
 	public void testContstructChatClient() throws UnknownHostException, IOException {
 		ChatClient cc = new ChatClient(IP, PORT);
 		cc.close();
 	}
 
+	/**
+	 * Test connecting with a wrong IP
+	 * 
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
 	@Test(expected = SocketException.class)
 	public void testWrongIp() throws UnknownHostException, IOException {
 		@SuppressWarnings({ "unused", "resource" })
@@ -43,6 +69,12 @@ public class TestChatClient {
 		});
 	}
 
+	/**
+	 * Test connecting with a wrong port
+	 * 
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testWrongPort() throws UnknownHostException, IOException {
 		@SuppressWarnings({ "unused", "resource" })
@@ -51,6 +83,12 @@ public class TestChatClient {
 		});
 	}
 
+	/**
+	 * Test sending a message
+	 * 
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
 	@Test
 	public void testSendMessage() throws UnknownHostException, IOException {
 		ChatClient cc2 = new ChatClient(IP, PORT);
@@ -70,6 +108,12 @@ public class TestChatClient {
 		cc1.close();
 	}
 
+	/**
+	 * Test if nick is getting sent correctly
+	 * 
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
 	@Test
 	public void testSendNick() throws UnknownHostException, IOException {
 		ChatClient cc1 = new ChatClient(IP, PORT);
