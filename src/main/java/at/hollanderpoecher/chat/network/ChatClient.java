@@ -10,6 +10,11 @@ import at.hollanderpoecher.chat.interfaces.Message;
 import at.hollanderpoecher.chat.util.Handler;
 import at.hollanderpoecher.chat.util.Util;
 
+/**
+ * A Chat Client that connects to a Multicast Group to send and recieve messages
+ * 
+ * @author Rene Hollander
+ */
 public class ChatClient implements Closeable {
 
 	private static final int BUFFER_SIZE = 4 * 1024;
@@ -21,6 +26,19 @@ public class ChatClient implements Closeable {
 	private Handler<Message> handler;
 	private SocketReader socketReader;
 
+	/**
+	 * Construct a new ChatClient and start listening for messages
+	 * 
+	 * @param groupAdress
+	 *            IP Adress of the group
+	 * @param port
+	 *            Port of the Multicast Socket
+	 * @param handler
+	 *            Handler to handle recieved messages
+	 * @throws IOException
+	 *             Throws an Exception of there are issues connecting to the
+	 *             Multicast Socket
+	 */
 	public ChatClient(InetAddress groupAdress, int port, Handler<Message> handler) throws IOException {
 		this.groupAdress = groupAdress;
 		this.port = port;
@@ -32,6 +50,14 @@ public class ChatClient implements Closeable {
 		this.socketReader = new SocketReader(this.socket, this.handler);
 	}
 
+	/**
+	 * Send a Message to the connected Multicast Group
+	 * 
+	 * @param message
+	 *            Message to send to the group
+	 * @throws IOException
+	 *             Throws IOException on error sending packet
+	 */
 	public void send(Message message) throws IOException {
 		byte[] data = MessageUtils.toByteArray(message);
 		DatagramPacket packet = new DatagramPacket(data, data.length, this.groupAdress, this.port);

@@ -13,6 +13,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import at.hollanderpoecher.chat.interfaces.Message;
 
+/**
+ * Chat Window to display chat messages and write messages
+ * 
+ * @author Rene Hollander
+ */
 public class ChatWindow implements Runnable {
 
 	private static final int SCENE_WIDTH = 800;
@@ -49,6 +54,12 @@ public class ChatWindow implements Runnable {
 		stage.show();
 	}
 
+	/**
+	 * Appends the text to the content text area
+	 * 
+	 * @param text
+	 *            Text to append
+	 */
 	public void appendText(String text) {
 		if (this.contentArea.getText().length() == 0) {
 			this.contentArea.appendText(text);
@@ -57,18 +68,41 @@ public class ChatWindow implements Runnable {
 		}
 	}
 
+	/**
+	 * Display the Message with timestamp to content
+	 * 
+	 * @param timestamp
+	 *            Timestamp to display
+	 * @param msg
+	 *            Message object to display
+	 */
 	public void appendText(LocalDateTime timestamp, Message msg) {
 		this.appendText("[" + timestamp.format(DATE_TIME_FORMATTER) + "] " + msg.getNick() + " (" + msg.getSenderAddress().getHostAddress() + "): " + msg.getMsg());
 	}
 
+	/**
+	 * Get ContentArea Node
+	 * 
+	 * @return TextArea
+	 */
 	public TextArea getContentArea() {
 		return contentArea;
 	}
 
+	/**
+	 * Get InputField Node
+	 * 
+	 * @return InputField
+	 */
 	public TextField getInputField() {
 		return inputField;
 	}
 
+	/**
+	 * Get SendButton Node
+	 * 
+	 * @return SendButton
+	 */
 	public Button getSendButton() {
 		return sendButton;
 	}

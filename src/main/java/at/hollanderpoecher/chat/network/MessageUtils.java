@@ -8,12 +8,24 @@ import java.nio.charset.CharsetEncoder;
 
 import at.hollanderpoecher.chat.interfaces.Message;
 
+/**
+ * MessageUtils to serialize and deserialize a ChatMessage
+ * 
+ * @author Rene Hollander
+ */
 public class MessageUtils {
 
 	private static final Charset charset = Charset.forName("UTF-8");
 	private static final CharsetEncoder encoder = charset.newEncoder();
 	private static final CharsetDecoder decoder = charset.newDecoder();
 
+	/**
+	 * Gets the byte data of the message to send over the network
+	 * 
+	 * @param message
+	 *            Message to serialize
+	 * @return Bytedata of the serialized message
+	 */
 	public static byte[] toByteArray(Message message) {
 		try {
 			byte[] nickBytes = encoder.encode(CharBuffer.wrap(message.getNick())).array();
@@ -33,6 +45,13 @@ public class MessageUtils {
 		}
 	}
 
+	/**
+	 * Reads the Bytedata and constructs a message from it
+	 * 
+	 * @param input
+	 *            Bytedata to deserialize into a message
+	 * @return Deserialized message
+	 */
 	public static Message fromByteArray(byte[] input) {
 		try {
 			ByteBuffer byteBuffer = ByteBuffer.wrap(input);
