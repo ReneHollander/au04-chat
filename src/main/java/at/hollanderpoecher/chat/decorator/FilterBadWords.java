@@ -3,9 +3,8 @@ package at.hollanderpoecher.chat.decorator;
 import at.hollanderpoecher.chat.interfaces.Message;
 import at.hollanderpoecher.chat.util.Util;
 
-
 /**
- *  A Message Decorator which filter bad words and change them int some symbol's.
+ * A Message Decorator which filter bad words and change them int some symbol's.
  *
  * @author Rene Poecher
  */

@@ -3,7 +3,7 @@ package at.hollanderpoecher.chat.decorator;
 import at.hollanderpoecher.chat.interfaces.Message;
 
 /**
- *  A Message Decorator which change all letters into uppercase
+ * A Message Decorator which change all letters into uppercase
  *
  * @author Rene Poecher
  */

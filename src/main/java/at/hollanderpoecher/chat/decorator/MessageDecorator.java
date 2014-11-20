@@ -5,7 +5,7 @@ import java.net.InetAddress;
 import at.hollanderpoecher.chat.interfaces.Message;
 
 /**
- *  The Message Decorator
+ * The Message Decorator
  *
  * @author Rene Poecher
  */

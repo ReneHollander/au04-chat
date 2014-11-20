@@ -4,7 +4,7 @@ import at.hollanderpoecher.chat.interfaces.Message;
 import at.hollanderpoecher.chat.util.Util;
 
 /**
- *  A Message Decorator which change Smileys into *lol*
+ * A Message Decorator which change Smileys into *lol*
  *
  * @author Rene Poecher
  */
