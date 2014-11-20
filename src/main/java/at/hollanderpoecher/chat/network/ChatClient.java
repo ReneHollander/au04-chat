@@ -45,12 +45,37 @@ public class ChatClient implements Closeable {
 	public ChatClient(InetAddress groupAdress, int port, Handler<Message> handler) throws IOException {
 		this.groupAdress = groupAdress;
 		this.port = port;
-		this.handler = handler;
+		this.setHandler(handler);
 
 		this.socket = new MulticastSocket(this.port);
 		this.socket.setReuseAddress(true);
 		this.socket.joinGroup(this.groupAdress);
 		this.socketReader = new SocketReader(this.socket, this.handler);
+	}
+
+	/**
+	 * Construct a new ChatClient and start listening for messages
+	 * 
+	 * @param groupAdress
+	 *            IP Adress of the group
+	 * @param port
+	 *            Port of the Multicast Socket
+	 * @throws IOException
+	 *             Throws an Exception of there are issues connecting to the
+	 *             Multicast Socket
+	 */
+	public ChatClient(InetAddress groupAdress, int port) throws IOException {
+		this(groupAdress, port, null);
+	}
+
+	/**
+	 * Set the handler to handle Message Events
+	 * 
+	 * @param handler
+	 *            Handler to handle Message Events
+	 */
+	public void setHandler(Handler<Message> handler) {
+		this.handler = handler;
 	}
 
 	/**
@@ -97,9 +122,11 @@ public class ChatClient implements Closeable {
 						LOGGER.throwing(e);
 					}
 				}
-				Message message = MessageUtils.fromByteArray(packet.getData());
-				message.setSenderAddress(packet.getAddress());
-				this.handler.handle(message);
+				if (handler != null) {
+					Message message = MessageUtils.fromByteArray(packet.getData());
+					message.setSenderAddress(packet.getAddress());
+					this.handler.handle(message);
+				}
 			}
 		}
 
